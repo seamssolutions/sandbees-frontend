@@ -148,7 +148,8 @@ const FinancialManagement: React.FC<FinancialManagementProps> = ({ onMount }) =>
     };
   };
 
-  const summary = calculateSummary();
+  // We'll remove the unused summary variable and calculate it directly when needed
+  // const summary = calculateSummary();
 
   // Handle input change for new transaction form
   const handleNewTransactionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

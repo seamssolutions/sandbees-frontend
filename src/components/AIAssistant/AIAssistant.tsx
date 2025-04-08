@@ -3,135 +3,125 @@ import './AIAssistant.css';
 import GlassCard from '../GlassCard/GlassCard';
 import GlassButton from '../GlassButton/GlassButton';
 import GlassInput from '../GlassInput/GlassInput';
-import AIIntegrationService from '../../services/AIIntegrationService';
+import { AIIntegrationService } from '../../services/AIIntegrationService';
 
 // Define interface for AIAssistant component props
 interface AIAssistantProps {
   onMount?: () => void;
 }
 
-// Initialize AI service
-const aiService = new AIIntegrationService();
-
 // Sample data for AI agents
-const initialAgents = [
+const aiAgents = [
   {
-    id: 'executive',
+    id: 1,
     name: 'Executive Meta-Agent',
-    description: 'Coordinates all other agents and handles high-level decision making',
-    status: 'active',
-    capabilities: [
-      'Task prioritization',
-      'Resource allocation',
-      'Decision making',
-      'Agent coordination'
-    ],
-    model: 'gpt-4o'
+    role: 'Coordination & Strategy',
+    description: 'Oversees all other agents and coordinates their activities. Handles high-level business strategy and decision-making.',
+    capabilities: ['Business strategy', 'Resource allocation', 'Performance monitoring', 'Inter-agent coordination'],
+    active: true
   },
   {
-    id: 'development',
+    id: 2,
     name: 'Development Agent',
-    description: 'Handles software development tasks and technical implementations',
-    status: 'active',
-    capabilities: [
-      'Code generation',
-      'Code review',
-      'Debugging',
-      'Technical documentation'
-    ],
-    model: 'gpt-4o'
+    role: 'Technical Development',
+    description: 'Specializes in software development, technical problem-solving, and system architecture.',
+    capabilities: ['Code generation', 'Technical documentation', 'Bug fixing', 'Architecture design'],
+    active: true
   },
   {
-    id: 'marketing',
+    id: 3,
     name: 'Marketing Agent',
-    description: 'Manages marketing campaigns, content creation, and market analysis',
-    status: 'active',
-    capabilities: [
-      'Content creation',
-      'Campaign planning',
-      'Market research',
-      'Social media management'
-    ],
-    model: 'gpt-4o'
+    role: 'Marketing & Promotion',
+    description: 'Handles marketing strategy, content creation, and promotional activities.',
+    capabilities: ['Content creation', 'Marketing strategy', 'Social media management', 'Analytics interpretation'],
+    active: true
+  },
+  {
+    id: 4,
+    name: 'Sales Agent',
+    role: 'Sales & Client Relations',
+    description: 'Manages sales processes, client relationships, and lead generation.',
+    capabilities: ['Lead qualification', 'Sales outreach', 'Client relationship management', 'Deal negotiation'],
+    active: false
+  },
+  {
+    id: 5,
+    name: 'Finance Agent',
+    role: 'Financial Management',
+    description: 'Handles financial planning, accounting, and financial analysis.',
+    capabilities: ['Financial reporting', 'Budget planning', 'Cash flow management', 'Financial forecasting'],
+    active: false
   }
 ];
 
-// Sample data for AI tasks
-const initialTasks = [
+// Sample data for active tasks
+const activeTasks = [
   {
     id: 1,
-    title: 'Analyze Q1 Financial Performance',
-    description: 'Review Q1 financial data and provide insights on performance trends and areas for improvement.',
-    assignedAgent: 'executive',
-    status: 'in_progress',
-    priority: 'high',
-    createdAt: '2025-04-05T09:00:00Z'
+    title: 'Develop Q2 Marketing Strategy',
+    description: 'Create a comprehensive marketing strategy for Q2 focusing on new product launch.',
+    assignedTo: 'Marketing Agent',
+    status: 'in-progress',
+    progress: 65,
+    dueDate: '2025-04-15'
   },
   {
     id: 2,
     title: 'Optimize Website Performance',
-    description: 'Identify and fix performance bottlenecks in the company website to improve load times and user experience.',
-    assignedAgent: 'development',
-    status: 'todo',
-    priority: 'medium',
-    createdAt: '2025-04-06T14:30:00Z'
+    description: 'Identify and fix performance bottlenecks in the company website.',
+    assignedTo: 'Development Agent',
+    status: 'in-progress',
+    progress: 40,
+    dueDate: '2025-04-20'
   },
   {
     id: 3,
-    title: 'Draft Social Media Content Calendar',
-    description: 'Create a content calendar for social media posts for the next month based on upcoming product launches and industry trends.',
-    assignedAgent: 'marketing',
-    status: 'completed',
-    priority: 'medium',
-    createdAt: '2025-04-02T11:15:00Z'
+    title: 'Quarterly Business Review',
+    description: 'Prepare a comprehensive review of Q1 performance and Q2 projections.',
+    assignedTo: 'Executive Meta-Agent',
+    status: 'in-progress',
+    progress: 80,
+    dueDate: '2025-04-10'
   }
 ];
 
-// Sample data for conversation history
+// Sample conversation history
 const initialConversation = [
   {
     id: 1,
-    agent: 'executive',
-    message: 'Good morning! How can I assist you today?',
-    timestamp: '2025-04-07T09:00:00Z',
-    type: 'agent'
+    sender: 'user',
+    message: 'Can you help me prepare a marketing plan for our new product launch?',
+    timestamp: '2025-04-05T09:30:00'
   },
   {
     id: 2,
-    message: 'I need help analyzing our Q1 financial performance.',
-    timestamp: '2025-04-07T09:01:15Z',
-    type: 'user'
+    sender: 'agent',
+    agent: 'Executive Meta-Agent',
+    message: 'I\'ll help you with that. Let me assign the Marketing Agent to create a detailed plan. What are the key features of the new product and the target launch date?',
+    timestamp: '2025-04-05T09:30:15'
   },
   {
     id: 3,
-    agent: 'executive',
-    message: 'I\'ll help you with that. Let me coordinate with the Finance Agent to analyze your Q1 financial data.',
-    timestamp: '2025-04-07T09:01:30Z',
-    type: 'agent'
+    sender: 'user',
+    message: 'It\'s a new project management tool with AI capabilities. We\'re targeting a June 1st launch date.',
+    timestamp: '2025-04-05T09:31:00'
   },
   {
     id: 4,
-    agent: 'executive',
-    message: 'I\'ve analyzed your Q1 financial data. Revenue is up 15% compared to last quarter, with a 12% increase in profit margin. Your top performing product line is showing 22% growth. Would you like me to prepare a detailed report?',
-    timestamp: '2025-04-07T09:02:45Z',
-    type: 'agent'
+    sender: 'agent',
+    agent: 'Marketing Agent',
+    message: 'I\'ll create a comprehensive marketing plan for the new AI project management tool. I\'ll focus on highlighting the AI capabilities as the unique selling proposition. Can you tell me about the target audience?',
+    timestamp: '2025-04-05T09:31:30'
   }
 ];
 
 const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
-  const [aiAgents, setAiAgents] = useState(initialAgents);
-  const [currentAgentId, setCurrentAgentId] = useState('executive');
+  const [activeAgent, setActiveAgent] = useState(aiAgents[0]);
   const [conversation, setConversation] = useState(initialConversation);
   const [newMessage, setNewMessage] = useState('');
-  const [tasks, setTasks] = useState(initialTasks);
-  const [showNewTaskForm, setShowNewTaskForm] = useState(false);
-  const [newTask, setNewTask] = useState({
-    title: '',
-    description: '',
-    assignedAgent: 'executive',
-    priority: 'medium'
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  // We'll keep the setIsLoading function but remove the unused isLoading variable
+  const [, setIsLoading] = useState(false);
+  const [showAgentDetails, setShowAgentDetails] = useState(false);
 
   // Call onMount callback when component mounts
   useEffect(() => {
@@ -140,30 +130,6 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
     }
   }, [onMount]);
 
-  // Load agents from API on component mount
-  useEffect(() => {
-    const loadAgents = async () => {
-      try {
-        const agents = await aiService.getAvailableAgents();
-        if (agents && agents.length > 0) {
-          setAiAgents(agents);
-        }
-      } catch (error) {
-        console.error('Error loading AI agents:', error);
-      }
-    };
-    
-    loadAgents();
-  }, []);
-
-  // Get current agent details
-  const currentAgent = aiAgents.find(agent => agent.id === currentAgentId) || aiAgents[0];
-
-  // Filter conversation for current agent
-  const filteredConversation = conversation.filter(msg => 
-    msg.type === 'user' || msg.agent === currentAgentId
-  );
-
   // Handle sending a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
@@ -171,9 +137,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
     // Add user message to conversation
     const userMessage = {
       id: conversation.length + 1,
+      sender: 'user',
       message: newMessage,
-      timestamp: new Date().toISOString(),
-      type: 'user' as const
+      timestamp: new Date().toISOString()
     };
     
     setConversation([...conversation, userMessage]);
@@ -181,276 +147,145 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
     setIsLoading(true);
     
     try {
-      // Send request to AI service
-      const response = await aiService.sendRequest({
-        agentId: currentAgentId,
-        message: newMessage,
-        userId: 'current-user', // In a real app, this would be the actual user ID
-        context: {}
-      });
-      
-      // Add agent response to conversation
-      const agentMessage = {
-        id: conversation.length + 2,
-        agent: response.agentId,
-        message: response.message,
-        timestamp: response.timestamp,
-        type: 'agent' as const
-      };
-      
-      setConversation(prev => [...prev, agentMessage]);
+      // Simulate AI response
+      setTimeout(() => {
+        const aiResponse = {
+          id: conversation.length + 2,
+          sender: 'agent',
+          agent: activeAgent.name,
+          message: AIIntegrationService.generateResponse(newMessage, activeAgent.name),
+          timestamp: new Date().toISOString()
+        };
+        setConversation(prev => [...prev, aiResponse]);
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
-      console.error('Error sending message to AI agent:', error);
-      
-      // Add error message to conversation
-      const errorMessage = {
-        id: conversation.length + 2,
-        agent: currentAgentId,
-        message: 'Sorry, there was an error processing your request. Please try again later.',
-        timestamp: new Date().toISOString(),
-        type: 'agent' as const
-      };
-      
-      setConversation(prev => [...prev, errorMessage]);
-    } finally {
+      console.error('Error generating AI response:', error);
       setIsLoading(false);
     }
   };
 
-  // Handle input change for new task form
-  const handleNewTaskChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewTask({ ...newTask, [name]: value });
-  };
-
-  // Handle new task submission
-  const handleNewTaskSubmit = () => {
-    const newTaskWithId = {
-      ...newTask,
-      id: Math.max(...tasks.map(t => t.id)) + 1,
-      status: 'todo',
-      createdAt: new Date().toISOString()
-    };
-    setTasks([...tasks, newTaskWithId]);
-    setShowNewTaskForm(false);
-    setNewTask({
-      title: '',
-      description: '',
-      assignedAgent: 'executive',
-      priority: 'medium'
-    });
+  // Switch active agent
+  const switchAgent = (agent) => {
+    setActiveAgent(agent);
+    setShowAgentDetails(false);
   };
 
   return (
     <div className="ai-assistant">
       <div className="ai-assistant-header">
         <h1 className="ai-assistant-title">AI Assistant</h1>
-        <GlassButton 
-          variant="primary" 
-          onClick={() => setShowNewTaskForm(true)}
-        >
-          New AI Task
-        </GlassButton>
       </div>
       
       <div className="ai-assistant-content">
-        <div className="ai-sidebar">
+        <div className="ai-agents-sidebar">
           <GlassCard title="AI Agents" className="ai-agents-card">
             <div className="ai-agents-list">
-              {aiAgents.map(agent => (
+              {aiAgents.filter(agent => agent.active).map(agent => (
                 <div 
                   key={agent.id}
-                  className={`ai-agent-item ${agent.id === currentAgentId ? 'active' : ''}`}
-                  onClick={() => setCurrentAgentId(agent.id)}
+                  className={`ai-agent-item ${agent.id === activeAgent.id ? 'active' : ''}`}
+                  onClick={() => switchAgent(agent)}
                 >
-                  <div className="ai-agent-name">{agent.name}</div>
-                  <div className="ai-agent-status">
-                    <span className={`status-indicator status-${agent.status}`}></span>
-                    {agent.status === 'active' ? 'Active' : 'Inactive'}
+                  <div className="ai-agent-icon">
+                    {agent.name.charAt(0)}
+                  </div>
+                  <div className="ai-agent-info">
+                    <div className="ai-agent-name">{agent.name}</div>
+                    <div className="ai-agent-role">{agent.role}</div>
                   </div>
                 </div>
               ))}
             </div>
           </GlassCard>
           
-          <GlassCard title="Active Tasks" className="ai-tasks-card">
-            <div className="ai-tasks-list">
-              {tasks.length === 0 ? (
-                <div className="no-tasks-message">No active AI tasks.</div>
-              ) : (
-                tasks.map(task => (
-                  <div key={task.id} className="ai-task-item">
-                    <div className="ai-task-header">
-                      <div className="ai-task-title">{task.title}</div>
-                      <div className={`ai-task-priority priority-${task.priority}`}>
-                        {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                      </div>
-                    </div>
-                    <div className="ai-task-details">
-                      <div className="ai-task-assigned">
-                        <span className="ai-task-label">Assigned to:</span>
-                        <span className="ai-task-agent">
-                          {aiAgents.find(a => a.id === task.assignedAgent)?.name || task.assignedAgent}
-                        </span>
-                      </div>
-                      <div className="ai-task-status">
-                        <span className="ai-task-label">Status:</span>
-                        <span className={`ai-task-status-value status-${task.status}`}>
-                          {task.status === 'in_progress' ? 'In Progress' : 
-                           task.status === 'todo' ? 'To Do' : 'Completed'}
-                        </span>
-                      </div>
-                    </div>
+          <GlassCard title="Active Tasks" className="active-tasks-card">
+            <div className="active-tasks-list">
+              {activeTasks.map(task => (
+                <div key={task.id} className="active-task-item">
+                  <div className="active-task-header">
+                    <div className="active-task-title">{task.title}</div>
+                    <div className="active-task-due">Due: {new Date(task.dueDate).toLocaleDateString()}</div>
                   </div>
-                ))
-              )}
+                  <div className="active-task-progress">
+                    <div className="active-task-progress-bar">
+                      <div 
+                        className="active-task-progress-fill"
+                        style={{ width: `${task.progress}%` }}
+                      ></div>
+                    </div>
+                    <div className="active-task-progress-text">{task.progress}%</div>
+                  </div>
+                  <div className="active-task-footer">
+                    <div className="active-task-assigned">Assigned to: {task.assignedTo}</div>
+                    <GlassButton variant="default" size="sm">View</GlassButton>
+                  </div>
+                </div>
+              ))}
             </div>
-            <GlassButton 
-              variant="default" 
-              fullWidth 
-              onClick={() => setShowNewTaskForm(true)}
-            >
-              Create New Task
-            </GlassButton>
           </GlassCard>
         </div>
         
-        <div className="ai-main-content">
-          {showNewTaskForm ? (
-            <GlassCard title="Create New AI Task" className="new-task-card">
-              <div className="new-task-form">
-                <label className="new-task-form-label">Title</label>
-                <GlassInput
-                  name="title"
-                  value={newTask.title}
-                  onChange={handleNewTaskChange}
-                  placeholder="Enter task title"
-                  required
-                />
-                
-                <label className="new-task-form-label">Description</label>
-                <textarea
-                  name="description"
-                  value={newTask.description}
-                  onChange={handleNewTaskChange}
-                  className="glass-textarea"
-                  placeholder="Enter task description"
-                />
-                
-                <div className="new-task-form-row">
-                  <label className="new-task-form-label">Assign To</label>
-                  <div className="new-task-form-radio-group">
-                    {aiAgents.map(agent => (
-                      <label key={agent.id} className="new-task-form-radio">
-                        <input
-                          type="radio"
-                          name="assignedAgent"
-                          value={agent.id}
-                          checked={newTask.assignedAgent === agent.id}
-                          onChange={handleNewTaskChange}
-                        />
-                        {agent.name}
-                      </label>
+        <div className="ai-conversation-area">
+          <GlassCard 
+            title={`Conversation with ${activeAgent.name}`} 
+            className="ai-conversation-card"
+            actions={
+              <GlassButton 
+                variant="default" 
+                size="sm" 
+                onClick={() => setShowAgentDetails(!showAgentDetails)}
+              >
+                {showAgentDetails ? 'Hide Details' : 'Agent Details'}
+              </GlassButton>
+            }
+          >
+            {showAgentDetails && (
+              <div className="ai-agent-details">
+                <div className="ai-agent-description">
+                  <h3>About {activeAgent.name}</h3>
+                  <p>{activeAgent.description}</p>
+                </div>
+                <div className="ai-agent-capabilities">
+                  <h3>Capabilities</h3>
+                  <ul className="ai-capabilities-list">
+                    {activeAgent.capabilities.map((capability, index) => (
+                      <li key={index} className="ai-capability-item">{capability}</li>
                     ))}
-                  </div>
-                </div>
-                
-                <div className="new-task-form-row">
-                  <label className="new-task-form-label">Priority</label>
-                  <div className="new-task-form-radio-group">
-                    <label className="new-task-form-radio">
-                      <input
-                        type="radio"
-                        name="priority"
-                        value="high"
-                        checked={newTask.priority === 'high'}
-                        onChange={handleNewTaskChange}
-                      />
-                      High
-                    </label>
-                    <label className="new-task-form-radio">
-                      <input
-                        type="radio"
-                        name="priority"
-                        value="medium"
-                        checked={newTask.priority === 'medium'}
-                        onChange={handleNewTaskChange}
-                      />
-                      Medium
-                    </label>
-                    <label className="new-task-form-radio">
-                      <input
-                        type="radio"
-                        name="priority"
-                        value="low"
-                        checked={newTask.priority === 'low'}
-                        onChange={handleNewTaskChange}
-                      />
-                      Low
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="new-task-form-actions">
-                  <GlassButton variant="secondary" onClick={() => setShowNewTaskForm(false)}>
-                    Cancel
-                  </GlassButton>
-                  <GlassButton variant="primary" onClick={handleNewTaskSubmit}>
-                    Create Task
-                  </GlassButton>
+                  </ul>
                 </div>
               </div>
-            </GlassCard>
-          ) : (
-            <GlassCard 
-              title={currentAgent.name} 
-              className="conversation-card"
-            >
-              <div className="agent-details">
-                <div className="agent-description">{currentAgent.description}</div>
-                <div className="agent-capabilities">
-                  <div className="agent-capabilities-title">Capabilities:</div>
-                  <div className="agent-capabilities-list">
-                    {currentAgent.capabilities.map((capability, index) => (
-                      <div key={index} className="agent-capability">
-                        {capability}
-                      </div>
-                    ))}
+            )}
+            
+            <div className="ai-conversation">
+              {conversation.map(message => (
+                <div 
+                  key={message.id} 
+                  className={`ai-message ${message.sender === 'user' ? 'user-message' : 'agent-message'}`}
+                >
+                  {message.sender === 'agent' && (
+                    <div className="ai-message-agent">{message.agent}</div>
+                  )}
+                  <div className="ai-message-content">{message.message}</div>
+                  <div className="ai-message-timestamp">
+                    {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
-                <div className="agent-model">
-                  <span className="agent-model-label">Model:</span>
-                  <span className="agent-model-value">{currentAgent.model}</span>
-                </div>
-              </div>
-              
-              <div className="conversation-messages">
-                {filteredConversation.map(msg => (
-                  <div 
-                    key={msg.id} 
-                    className={`message ${msg.type === 'user' ? 'user-message' : 'agent-message'}`}
-                  >
-                    <div className="message-content">{msg.message}</div>
-                    <div className="message-timestamp">
-                      {new Date(msg.timestamp).toLocaleTimeString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="message-input-container">
-                <GlassInput
-                  placeholder={`Message ${currentAgent.name}...`}
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                />
-                <GlassButton variant="primary" onClick={handleSendMessage}>
-                  Send
-                </GlassButton>
-              </div>
-            </GlassCard>
-          )}
+              ))}
+            </div>
+            
+            <div className="ai-message-input">
+              <GlassInput
+                placeholder={`Message ${activeAgent.name}...`}
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <GlassButton variant="primary" onClick={handleSendMessage}>
+                Send
+              </GlassButton>
+            </div>
+          </GlassCard>
         </div>
       </div>
     </div>
