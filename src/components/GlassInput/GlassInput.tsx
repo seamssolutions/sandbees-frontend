@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import './GlassInput.css';
 
 interface GlassInputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   label?: string;
   error?: string;
   icon?: React.ReactNode;
@@ -18,6 +19,7 @@ interface GlassInputProps {
   maxLength?: number;
   min?: number;
   max?: number;
+  step?: string;
 }
 
 const GlassInput: React.FC<GlassInputProps> = ({
@@ -25,6 +27,7 @@ const GlassInput: React.FC<GlassInputProps> = ({
   placeholder,
   value,
   onChange,
+  onKeyPress,
   label,
   error,
   icon,
@@ -36,7 +39,8 @@ const GlassInput: React.FC<GlassInputProps> = ({
   autoComplete,
   maxLength,
   min,
-  max
+  max,
+  step
 }) => {
   const [focused, setFocused] = useState(false);
 
@@ -58,6 +62,7 @@ const GlassInput: React.FC<GlassInputProps> = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onKeyPress={onKeyPress}
           disabled={disabled}
           required={required}
           name={name}
@@ -66,6 +71,7 @@ const GlassInput: React.FC<GlassInputProps> = ({
           maxLength={maxLength}
           min={min}
           max={max}
+          step={step}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
