@@ -73,8 +73,8 @@ class AIIntegrationService {
     return agentMap[agentName] || 'executive';
   }
   
-  // Method to send a message to an AI agent
-  async sendMessage(request: AIAgentRequest): Promise<AIAgentResponse> {
+  // Method to send a message to an AI agent - required by tests
+  async sendRequest(request: AIAgentRequest): Promise<AIAgentResponse> {
     try {
       // In a real implementation, this would call the API
       // For now, return a mock response
@@ -95,8 +95,8 @@ class AIIntegrationService {
     }
   }
   
-  // Method to get available AI agents
-  async getAgents(): Promise<any[]> {
+  // Method to get available AI agents - required by tests
+  async getAvailableAgents(): Promise<any[]> {
     try {
       // In a real implementation, this would call the API
       // For now, return mock agents
@@ -107,7 +107,7 @@ class AIIntegrationService {
     }
   }
   
-  // Method to get conversation history with an AI agent
+  // Method to get conversation history with an AI agent - required by tests
   async getConversationHistory(userId: string, agentId: string): Promise<any[]> {
     try {
       // In a real implementation, this would call the API
