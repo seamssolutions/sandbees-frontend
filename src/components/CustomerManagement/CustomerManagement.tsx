@@ -256,7 +256,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({ onMount }) => {
                   value={newCustomer.value}
                   onChange={handleNewCustomerChange}
                   placeholder="0.00"
-                  min="0"
+                  min={0}
                   step="0.01"
                 />
               </div>

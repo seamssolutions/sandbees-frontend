@@ -258,7 +258,7 @@ const FinancialManagement: React.FC<FinancialManagementProps> = ({ onMount }) =>
                 value={newTransaction.amount}
                 onChange={handleNewTransactionChange}
                 placeholder="0.00"
-                min="0"
+                min={0}
                 step="0.01"
                 required
               />

@@ -19,7 +19,7 @@ interface GlassInputProps {
   maxLength?: number;
   min?: number;
   max?: number;
-  step?: string;
+  step?: string | number;
 }
 
 const GlassInput: React.FC<GlassInputProps> = ({
