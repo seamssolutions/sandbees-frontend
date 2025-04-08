@@ -1,5 +1,5 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React, { ReactElement } from 'react';
+import { render, screen, fireEvent, waitFor, RenderOptions } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
 import Navigation from '../components/Navigation/Navigation';
@@ -10,7 +10,7 @@ import CustomerManagement from '../components/CustomerManagement/CustomerManagem
 import AIAssistant from '../components/AIAssistant/AIAssistant';
 
 // Helper function to render components with Router
-const renderWithRouter = (ui, { route = '/' } = {}) => {
+const renderWithRouter = (ui: ReactElement, { route = '/' } = {}): ReturnType<typeof render> => {
   window.history.pushState({}, 'Test page', route);
   return render(ui, { wrapper: BrowserRouter });
 };
@@ -20,25 +20,27 @@ const mockProps = {
   onMount: jest.fn()
 };
 
-describe('App Component Tests', () => {
+describe('Sandbees App', () => {
   // App Component Tests
   describe('App Component', () => {
     test('renders without crashing', () => {
       renderWithRouter(<App />);
-      expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sandbees/i)).toBeInTheDocument();
     });
     
-    test('navigates to different sections', () => {
+    test('navigates to different sections', async () => {
       renderWithRouter(<App />);
-      const tasksLink = screen.getByText(/Tasks/i);
-      fireEvent.click(tasksLink);
-      expect(window.location.pathname).toBe('/tasks');
+      const dashboardLink = screen.getByText(/Dashboard/i);
+      fireEvent.click(dashboardLink);
+      await waitFor(() => {
+        expect(window.location.pathname).toBe('/dashboard');
+      });
     });
   });
-
+  
   // Navigation Component Tests
   describe('Navigation Component', () => {
-    test('renders navigation links', () => {
+    test('renders all navigation items', () => {
       renderWithRouter(<Navigation activeSection="dashboard" />);
       expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
       expect(screen.getByText(/Tasks/i)).toBeInTheDocument();
@@ -61,7 +63,7 @@ describe('App Component Tests', () => {
       expect(toggleButton).toHaveAttribute('aria-label', 'Collapse menu');
     });
   });
-
+  
   // Dashboard Component Tests
   describe('Dashboard Component', () => {
     test('renders dashboard with KPIs', () => {
@@ -76,7 +78,7 @@ describe('App Component Tests', () => {
       expect(mockProps.onMount).toHaveBeenCalled();
     });
   });
-
+  
   // Task Management Component Tests
   describe('Task Management Component', () => {
     test('renders task management interface', () => {
@@ -96,7 +98,7 @@ describe('App Component Tests', () => {
       expect(screen.getByText(/Create New Task/i)).toBeInTheDocument();
     });
   });
-
+  
   // Financial Management Component Tests
   describe('Financial Management Component', () => {
     test('renders financial management interface', () => {
@@ -115,7 +117,7 @@ describe('App Component Tests', () => {
       expect(screen.getAllByText(/Transaction/i).length).toBeGreaterThan(0);
     });
   });
-
+  
   // Customer Management Component Tests
   describe('Customer Management Component', () => {
     test('renders customer management interface', () => {
@@ -135,7 +137,7 @@ describe('App Component Tests', () => {
       expect(screen.getAllByText(/Email/i).length).toBeGreaterThan(0);
     });
   });
-
+  
   // AI Assistant Component Tests
   describe('AI Assistant Component', () => {
     test('renders AI assistant interface', () => {
