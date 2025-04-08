@@ -1,0 +1,74 @@
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.07);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  transform: translateY(-2px);
+}
+
+.glass-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-card-header.collapsible {
+  cursor: pointer;
+}
+
+.glass-card-header.collapsible:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.glass-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.glass-card-toggle {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.glass-card-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #334155;
+}
+
+.glass-card-content {
+  padding: 1.5rem;
+  transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.glass-card-content.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+}

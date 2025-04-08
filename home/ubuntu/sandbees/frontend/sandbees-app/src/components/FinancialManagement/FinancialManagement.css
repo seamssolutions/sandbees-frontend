@@ -1,0 +1,247 @@
+.financial-management {
+  padding: 1.5rem;
+}
+
+.financial-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.financial-management-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  font-family: 'SF Pro Display', 'Inter', system-ui, sans-serif;
+}
+
+.financial-management-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.financial-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.financial-summary-card {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.financial-summary-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.financial-summary-label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.financial-summary-income .financial-summary-value {
+  color: #0ea5e9;
+}
+
+.financial-summary-expenses .financial-summary-value {
+  color: #ef4444;
+}
+
+.financial-summary-profit .financial-summary-value {
+  color: #22c55e;
+}
+
+.financial-summary-pending .financial-summary-value {
+  color: #f59e0b;
+}
+
+.financial-management-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.transaction-filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.transaction-search {
+  width: 300px;
+}
+
+.transactions-card {
+  margin-bottom: 2rem;
+}
+
+.transactions-table-container {
+  overflow-x: auto;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.transactions-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.transactions-table td {
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+}
+
+.transactions-table tr:last-child td {
+  border-bottom: none;
+}
+
+.transactions-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.transaction-amount {
+  font-weight: 600;
+}
+
+.transaction-amount-income {
+  color: #22c55e;
+}
+
+.transaction-amount-expense {
+  color: #ef4444;
+}
+
+.transaction-amount-invoice {
+  color: #0ea5e9;
+}
+
+.transaction-type {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.transaction-type-income {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.transaction-type-expense {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.transaction-type-invoice {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: #0284c7;
+}
+
+.transaction-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.transaction-status-completed {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.transaction-status-pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.transaction-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.new-transaction-form {
+  margin-bottom: 2rem;
+}
+
+.new-transaction-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.new-transaction-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.new-transaction-form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.new-transaction-form-radio-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.new-transaction-form-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.new-transaction-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.no-transactions {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .financial-management-header,
+  .financial-management-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .transaction-search {
+    width: 100%;
+  }
+  
+  .transaction-filter-buttons {
+    flex-wrap: wrap;
+  }
+}

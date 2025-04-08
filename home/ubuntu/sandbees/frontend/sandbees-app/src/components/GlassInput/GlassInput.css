@@ -1,0 +1,81 @@
+.glass-input-container {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.glass-input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.glass-input-required {
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+.glass-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 6px 0 rgba(31, 38, 135, 0.07);
+  transition: all 0.3s ease;
+  padding: 0 1rem;
+}
+
+.glass-input-wrapper:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.glass-input-wrapper.focused {
+  border-color: rgba(14, 165, 233, 0.5);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.glass-input-wrapper.error {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.glass-input-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: rgba(241, 245, 249, 0.3);
+}
+
+.glass-input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  color: #64748b;
+}
+
+.glass-input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.glass-input-field::placeholder {
+  color: #94a3b8;
+}
+
+.glass-input-field:disabled {
+  cursor: not-allowed;
+}
+
+.glass-input-error {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #ef4444;
+}
