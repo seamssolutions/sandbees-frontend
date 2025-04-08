@@ -3,7 +3,7 @@ import './AIAssistant.css';
 import GlassCard from '../GlassCard/GlassCard';
 import GlassButton from '../GlassButton/GlassButton';
 import GlassInput from '../GlassInput/GlassInput';
-import { AIIntegrationService } from '../../services/AIIntegrationService';
+import AIIntegrationService from '../../services/AIIntegrationService';
 
 // Define interface for AIAssistant component props
 interface AIAssistantProps {

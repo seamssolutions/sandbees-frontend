@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 // Define interfaces for AI agent communication
 interface AIAgentRequest {
   agentId: string;
@@ -7,7 +6,6 @@ interface AIAgentRequest {
   userId: string;
   context?: Record<string, any>;
 }
-
 interface AIAgentResponse {
   agentId: string;
   message: string;
@@ -16,103 +14,113 @@ interface AIAgentResponse {
   status: 'success' | 'error' | 'pending';
   data?: Record<string, any>;
 }
-
 class AIIntegrationService {
   private apiUrl: string;
-  private mockMode: boolean;
-  private mockDelay: number;
   
   constructor() {
-    // Get API URL from environment variables
     this.apiUrl = process.env.REACT_APP_API_URL || 'https://sandbees-dashboard-production.up.railway.app';
-    // Use mock mode for development or when API is not available
-    this.mockMode = process.env.REACT_APP_ENV !== 'production';
-    this.mockDelay = 500; // Simulate network delay for mock responses
   }
   
-  // Send a request to an AI agent
-  public async sendRequest(request: AIAgentRequest): Promise<AIAgentResponse> {
-    console.log(`Sending request to agent ${request.agentId}:`, request);
+  // Public method to generate a response from an AI agent
+  static generateResponse(message: string, agentName: string): string {
+    // Map agent name to agent ID
+    const agentId = this.mapAgentNameToId(agentName);
     
-    if (this.mockMode) {
-      // In mock mode, simulate a response
-      await this.delay(this.mockDelay);
-      
-      const response: AIAgentResponse = {
+    // In a real implementation, this would call the API
+    // For now, return a mock response
+    const mockResponses: Record<string, string[]> = {
+      'executive': [
+        'I understand your request. Let me coordinate with the appropriate agents to help you with this task.',
+        'I\'ll prioritize this task and ensure it gets completed efficiently.',
+        'I\'ve analyzed your request and will allocate the necessary resources to address it.'
+      ],
+      'development': [
+        'I can help you with that development task. Let me analyze the requirements and propose a solution.',
+        'I\'ll review the code and identify any potential issues or improvements.',
+        'I can implement that feature for you. I\'ll start working on it right away.'
+      ],
+      'marketing': [
+        'Based on market trends, I recommend focusing on these key messaging points for your campaign.',
+        'I\'ve analyzed your target audience and can suggest content strategies that would resonate with them.',
+        'I can draft social media content that aligns with your brand voice and marketing objectives.'
+      ],
+      'finance': [
+        'I\'ve analyzed your financial data and identified several opportunities for optimization.',
+        'Based on your current cash flow, I recommend adjusting your budget allocations in these areas.',
+        'I can prepare a detailed financial forecast to help with your planning process.'
+      ],
+      'customer': [
+        'I can help you craft a response to this customer inquiry that addresses their concerns.',
+        'Based on this customer\'s history, I recommend the following approach to strengthen the relationship.',
+        'I\'ve analyzed customer feedback patterns and can suggest improvements to your service process.'
+      ]
+    };
+    
+    const responses = mockResponses[agentId] || mockResponses['executive'];
+    return responses[Math.floor(Math.random() * responses.length)];
+  }
+  
+  // Helper method to map agent name to ID
+  private static mapAgentNameToId(agentName: string): string {
+    const agentMap: Record<string, string> = {
+      'Executive Meta-Agent': 'executive',
+      'Development Agent': 'development',
+      'Marketing Agent': 'marketing',
+      'Finance Agent': 'finance',
+      'Customer Relations Agent': 'customer'
+    };
+    
+    return agentMap[agentName] || 'executive';
+  }
+  
+  // Method to send a message to an AI agent
+  async sendMessage(request: AIAgentRequest): Promise<AIAgentResponse> {
+    try {
+      // In a real implementation, this would call the API
+      // For now, return a mock response
+      return {
         agentId: request.agentId,
-        message: this.generateMockResponse(request),
+        message: this.getMockResponse(request),
         timestamp: new Date().toISOString(),
         status: 'success'
       };
-      
-      return response;
-    } else {
-      // In production mode, make an actual API call
-      try {
-        const response = await axios.post(`${this.apiUrl}/api/agents/${request.agentId}/request`, request);
-        return response.data;
-      } catch (error) {
-        console.error('Error sending request to AI agent:', error);
-        return {
-          agentId: request.agentId,
-          message: 'Sorry, there was an error processing your request. Please try again later.',
-          timestamp: new Date().toISOString(),
-          status: 'error'
-        };
-      }
+    } catch (error) {
+      console.error('Error sending message to AI agent:', error);
+      return {
+        agentId: request.agentId,
+        message: 'Sorry, I encountered an error processing your request.',
+        timestamp: new Date().toISOString(),
+        status: 'error'
+      };
     }
   }
   
-  // Get available AI agents
-  public async getAvailableAgents(): Promise<any[]> {
-    console.log('Getting available agents');
-    
-    if (this.mockMode) {
-      // In mock mode, return mock data
-      await this.delay(this.mockDelay);
-      
+  // Method to get available AI agents
+  async getAgents(): Promise<any[]> {
+    try {
+      // In a real implementation, this would call the API
+      // For now, return mock agents
       return this.getMockAgents();
-    } else {
-      // In production mode, make an actual API call
-      try {
-        const response = await axios.get(`${this.apiUrl}/api/agents`);
-        return response.data;
-      } catch (error) {
-        console.error('Error getting available agents:', error);
-        // Fall back to mock data if API call fails
-        return this.getMockAgents();
-      }
+    } catch (error) {
+      console.error('Error getting AI agents:', error);
+      return [];
     }
   }
   
-  // Get conversation history for a user with a specific agent
-  public async getConversationHistory(userId: string, agentId: string): Promise<any[]> {
-    console.log(`Getting conversation history for user ${userId} with agent ${agentId}`);
-    
-    if (this.mockMode) {
-      // In mock mode, return mock data
-      await this.delay(this.mockDelay);
-      
+  // Method to get conversation history with an AI agent
+  async getConversationHistory(userId: string, agentId: string): Promise<any[]> {
+    try {
+      // In a real implementation, this would call the API
+      // For now, return mock conversation history
       return this.getMockConversationHistory(userId, agentId);
-    } else {
-      // In production mode, make an actual API call
-      try {
-        const response = await axios.get(`${this.apiUrl}/api/users/${userId}/conversations/${agentId}`);
-        return response.data;
-      } catch (error) {
-        console.error('Error getting conversation history:', error);
-        // Fall back to mock data if API call fails
-        return this.getMockConversationHistory(userId, agentId);
-      }
+    } catch (error) {
+      console.error('Error getting conversation history:', error);
+      return [];
     }
   }
   
-  // Helper methods
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  
-  private generateMockResponse(request: AIAgentRequest): string {
+  // Method to get a mock response from an AI agent
+  private getMockResponse(request: AIAgentRequest): string {
     const responses: Record<string, string[]> = {
       'executive': [
         'I understand your request. Let me coordinate with the appropriate agents to help you with this task.',
@@ -247,5 +255,4 @@ class AIIntegrationService {
     ].filter(msg => msg.type === 'user' || msg.agent === agentId);
   }
 }
-
 export default AIIntegrationService;
