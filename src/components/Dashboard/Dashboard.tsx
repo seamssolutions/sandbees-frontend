@@ -1,35 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Dashboard.css';
 import GlassCard from '../GlassCard/GlassCard';
 import GlassButton from '../GlassButton/GlassButton';
 
-// Mock data for the dashboard
-const kpiData = [
-  { title: 'Revenue', value: '$24,500', change: '+12%', progress: 70 },
-  { title: 'Customers', value: '156', change: '+8', progress: 60 },
-  { title: 'Tasks', value: '24', change: '12 completed', progress: 50 }
-];
+// Define interface for Dashboard component props
+interface DashboardProps {
+  onMount?: () => void;
+}
 
-const taskData = [
-  { id: 1, title: 'Complete quarterly report', dueDate: 'Apr 15, 2025', status: 'in_progress' },
-  { id: 2, title: 'Review marketing campaign', dueDate: 'Apr 20, 2025', status: 'todo' },
-  { id: 3, title: 'Client meeting preparation', dueDate: 'Apr 10, 2025', status: 'completed' }
+// Sample data for dashboard
+const kpiData = [
+  { title: 'Revenue', value: '$24,500', change: '+15%', progress: 75 },
+  { title: 'Expenses', value: '$12,800', change: '-8%', progress: 45 },
+  { title: 'Customers', value: '156', change: '+12%', progress: 65 },
+  { title: 'Tasks', value: '24', change: '+5', progress: 80 }
 ];
 
 const financialData = {
-  income: '$32,500',
-  expenses: '$8,000',
-  profit: '$24,500',
-  pendingInvoices: '$12,300'
+  income: '$24,500',
+  expenses: '$12,800',
+  profit: '$11,700',
+  pendingInvoices: '$8,200'
 };
 
+const taskData = [
+  { id: 1, title: 'Complete Q1 Financial Report', status: 'in_progress', dueDate: 'Apr 10, 2025' },
+  { id: 2, title: 'Client Meeting - TechCorp', status: 'todo', dueDate: 'Apr 12, 2025' },
+  { id: 3, title: 'Update Marketing Materials', status: 'completed', dueDate: 'Apr 5, 2025' }
+];
+
 const contactData = [
-  { id: 1, name: 'John Smith', company: 'Acme Inc.', status: 'customer', lastContact: 'Apr 5, 2025' },
+  { id: 1, name: 'John Smith', company: 'ABC Corp', status: 'client', lastContact: 'Apr 5, 2025' },
   { id: 2, name: 'Sarah Johnson', company: 'TechCorp', status: 'lead', lastContact: 'Apr 3, 2025' },
   { id: 3, name: 'Michael Brown', company: 'Global Solutions', status: 'partner', lastContact: 'Apr 1, 2025' }
 ];
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<DashboardProps> = ({ onMount }) => {
+  // Call onMount callback when component mounts
+  useEffect(() => {
+    if (onMount) {
+      onMount();
+    }
+  }, [onMount]);
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -43,7 +56,6 @@ const Dashboard: React.FC = () => {
           </GlassButton>
         </div>
       </div>
-
       <div className="dashboard-kpi-grid">
         {kpiData.map((kpi, index) => (
           <GlassCard key={index} title={kpi.title} className="dashboard-kpi-card">
@@ -58,7 +70,6 @@ const Dashboard: React.FC = () => {
           </GlassCard>
         ))}
       </div>
-
       <div className="dashboard-main-grid">
         <GlassCard title="Recent Tasks" className="dashboard-tasks-card">
           <div className="dashboard-tasks-list">
@@ -79,7 +90,6 @@ const Dashboard: React.FC = () => {
             View All Tasks
           </GlassButton>
         </GlassCard>
-
         <GlassCard title="Financial Summary" className="dashboard-finance-card">
           <div className="dashboard-finance-summary">
             <div className="dashboard-finance-item">
@@ -104,7 +114,6 @@ const Dashboard: React.FC = () => {
             View Financial Details
           </GlassButton>
         </GlassCard>
-
         <GlassCard title="Recent Contacts" className="dashboard-contacts-card">
           <div className="dashboard-contacts-table">
             <table>

@@ -1,184 +1,271 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './FinancialManagement.css';
 import GlassCard from '../GlassCard/GlassCard';
 import GlassButton from '../GlassButton/GlassButton';
 import GlassInput from '../GlassInput/GlassInput';
 
-// Mock financial data
+// Define interface for FinancialManagement component props
+interface FinancialManagementProps {
+  onMount?: () => void;
+}
+
+// Sample data for financial metrics
+const financialMetrics = {
+  totalRevenue: 124500,
+  totalExpenses: 78200,
+  netProfit: 46300,
+  pendingInvoices: 32800,
+  accountsReceivable: 45600,
+  accountsPayable: 18700
+};
+
+// Sample data for transactions
 const initialTransactions = [
   {
     id: 1,
-    type: 'income',
-    amount: 12500,
-    description: 'Client payment - ABC Corp',
-    category: 'Sales',
     date: '2025-04-01',
+    description: 'Client Payment - ABC Corp',
+    category: 'Services',
+    amount: 5000,
+    type: 'income',
     status: 'completed'
   },
   {
     id: 2,
-    type: 'expense',
-    amount: 2300,
-    description: 'Office rent',
+    date: '2025-04-03',
+    description: 'Office Rent',
     category: 'Rent',
-    date: '2025-04-02',
+    amount: 2500,
+    type: 'expense',
     status: 'completed'
   },
   {
     id: 3,
-    type: 'income',
-    amount: 8500,
-    description: 'Client payment - XYZ Inc',
-    category: 'Sales',
     date: '2025-04-05',
+    description: 'Software Subscription',
+    category: 'Software',
+    amount: 99.99,
+    type: 'expense',
     status: 'completed'
   },
   {
     id: 4,
-    type: 'expense',
-    amount: 1200,
-    description: 'Software subscriptions',
-    category: 'Software',
-    date: '2025-04-07',
-    status: 'completed'
+    date: '2025-04-10',
+    description: 'Invoice #1042 - TechCorp',
+    category: 'Consulting',
+    amount: 7500,
+    type: 'invoice',
+    status: 'pending'
   },
   {
     id: 5,
-    type: 'expense',
-    amount: 850,
-    description: 'Marketing expenses',
-    category: 'Marketing',
-    date: '2025-04-10',
+    date: '2025-04-15',
+    description: 'Client Payment - XYZ Inc',
+    category: 'Services',
+    amount: 3200,
+    type: 'income',
     status: 'completed'
   },
   {
     id: 6,
-    type: 'income',
-    amount: 11500,
-    description: 'Client payment - Global Solutions',
-    category: 'Sales',
-    date: '2025-04-15',
+    date: '2025-04-18',
+    description: 'Marketing Campaign',
+    category: 'Marketing',
+    amount: 1200,
+    type: 'expense',
     status: 'completed'
   },
   {
     id: 7,
+    date: '2025-04-20',
+    description: 'Invoice #1043 - Global Solutions',
+    category: 'Development',
+    amount: 12000,
     type: 'invoice',
-    amount: 12300,
-    description: 'Consulting services - TechCorp',
-    category: 'Consulting',
-    date: '2025-04-18',
     status: 'pending'
+  },
+  {
+    id: 8,
+    date: '2025-04-25',
+    description: 'Team Lunch',
+    category: 'Meals',
+    amount: 175.50,
+    type: 'expense',
+    status: 'completed'
   }
 ];
 
-const FinancialManagement: React.FC = () => {
+const FinancialManagement: React.FC<FinancialManagementProps> = ({ onMount }) => {
   const [transactions, setTransactions] = useState(initialTransactions);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewTransactionForm, setShowNewTransactionForm] = useState(false);
   const [newTransaction, setNewTransaction] = useState({
-    type: 'income',
-    amount: '',
+    date: new Date().toISOString().split('T')[0],
     description: '',
     category: '',
-    date: new Date().toISOString().split('T')[0],
+    amount: '',
+    type: 'income',
     status: 'completed'
   });
 
-  // Calculate financial summary
-  const financialSummary = {
-    totalIncome: transactions
-      .filter(t => t.type === 'income' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0),
-    totalExpenses: transactions
-      .filter(t => t.type === 'expense' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0),
-    pendingInvoices: transactions
-      .filter(t => t.type === 'invoice' && t.status === 'pending')
-      .reduce((sum, t) => sum + t.amount, 0)
-  };
-
-  const profit = financialSummary.totalIncome - financialSummary.totalExpenses;
+  // Call onMount callback when component mounts
+  useEffect(() => {
+    if (onMount) {
+      onMount();
+    }
+  }, [onMount]);
 
   // Filter transactions based on type and search term
   const filteredTransactions = transactions.filter(transaction => {
     const matchesFilter = filter === 'all' || transaction.type === filter;
-    const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
     return matchesFilter && matchesSearch;
   });
 
-  // Handle new transaction form input changes
-  const handleNewTransactionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Calculate financial summary based on filtered transactions
+  const calculateSummary = () => {
+    const income = filteredTransactions
+      .filter(t => t.type === 'income' && t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const expenses = filteredTransactions
+      .filter(t => t.type === 'expense' && t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const pendingInvoices = filteredTransactions
+      .filter(t => t.type === 'invoice' && t.status === 'pending')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    return {
+      income,
+      expenses,
+      profit: income - expenses,
+      pendingInvoices
+    };
+  };
+
+  const summary = calculateSummary();
+
+  // Handle input change for new transaction form
+  const handleNewTransactionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewTransaction({
-      ...newTransaction,
-      [name]: name === 'amount' ? value : value
-    });
+    setNewTransaction({ ...newTransaction, [name]: value });
   };
 
   // Handle new transaction submission
   const handleNewTransactionSubmit = () => {
-    if (newTransaction.description && newTransaction.amount && newTransaction.date) {
-      const newTransactionWithId = {
-        ...newTransaction,
-        id: transactions.length + 1,
-        amount: parseFloat(newTransaction.amount as string)
-      };
-      setTransactions([...transactions, newTransactionWithId]);
-      setNewTransaction({
-        type: 'income',
-        amount: '',
-        description: '',
-        category: '',
-        date: new Date().toISOString().split('T')[0],
-        status: 'completed'
-      });
-      setShowNewTransactionForm(false);
-    }
+    const newTransactionWithId = {
+      ...newTransaction,
+      id: Math.max(...transactions.map(t => t.id)) + 1,
+      amount: parseFloat(newTransaction.amount)
+    };
+    setTransactions([...transactions, newTransactionWithId]);
+    setShowNewTransactionForm(false);
+    setNewTransaction({
+      date: new Date().toISOString().split('T')[0],
+      description: '',
+      category: '',
+      amount: '',
+      type: 'income',
+      status: 'completed'
+    });
   };
 
   return (
     <div className="financial-management">
       <div className="financial-management-header">
         <h1 className="financial-management-title">Financial Management</h1>
-        <div className="financial-management-actions">
-          <GlassButton 
-            variant="primary" 
-            onClick={() => setShowNewTransactionForm(!showNewTransactionForm)}
-          >
-            {showNewTransactionForm ? 'Cancel' : 'New Transaction'}
-          </GlassButton>
-        </div>
+        <GlassButton 
+          variant="primary" 
+          onClick={() => setShowNewTransactionForm(true)}
+        >
+          New Transaction
+        </GlassButton>
       </div>
-
-      <div className="financial-summary-cards">
-        <GlassCard title="Income" className="financial-summary-card financial-summary-income">
-          <div className="financial-summary-value">${financialSummary.totalIncome.toLocaleString()}</div>
-          <div className="financial-summary-label">Total Income</div>
+      
+      <div className="financial-metrics-grid">
+        <GlassCard title="Revenue" className="financial-metric-card">
+          <div className="financial-metric-value">${financialMetrics.totalRevenue.toLocaleString()}</div>
+          <div className="financial-metric-chart">
+            {/* Revenue chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Expenses" className="financial-summary-card financial-summary-expenses">
-          <div className="financial-summary-value">${financialSummary.totalExpenses.toLocaleString()}</div>
-          <div className="financial-summary-label">Total Expenses</div>
+        <GlassCard title="Expenses" className="financial-metric-card">
+          <div className="financial-metric-value">${financialMetrics.totalExpenses.toLocaleString()}</div>
+          <div className="financial-metric-chart">
+            {/* Expenses chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Profit" className="financial-summary-card financial-summary-profit">
-          <div className="financial-summary-value">${profit.toLocaleString()}</div>
-          <div className="financial-summary-label">Net Profit</div>
+        <GlassCard title="Net Profit" className="financial-metric-card">
+          <div className="financial-metric-value">${financialMetrics.netProfit.toLocaleString()}</div>
+          <div className="financial-metric-chart">
+            {/* Profit chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Pending" className="financial-summary-card financial-summary-pending">
-          <div className="financial-summary-value">${financialSummary.pendingInvoices.toLocaleString()}</div>
-          <div className="financial-summary-label">Pending Invoices</div>
+        <GlassCard title="Pending Invoices" className="financial-metric-card">
+          <div className="financial-metric-value">${financialMetrics.pendingInvoices.toLocaleString()}</div>
+          <div className="financial-metric-chart">
+            {/* Pending invoices chart would go here */}
+          </div>
         </GlassCard>
       </div>
-
+      
       {showNewTransactionForm && (
-        <GlassCard title="Create New Transaction" className="new-transaction-form">
-          <div className="new-transaction-form-grid">
+        <GlassCard title="New Transaction" className="new-transaction-form-card">
+          <div className="new-transaction-form">
             <div className="new-transaction-form-row">
-              <label className="new-transaction-form-label">Transaction Type</label>
+              <label className="new-transaction-form-label">Date</label>
+              <GlassInput
+                type="date"
+                name="date"
+                value={newTransaction.date}
+                onChange={handleNewTransactionChange}
+                required
+              />
+            </div>
+            
+            <div className="new-transaction-form-row">
+              <label className="new-transaction-form-label">Description</label>
+              <GlassInput
+                name="description"
+                value={newTransaction.description}
+                onChange={handleNewTransactionChange}
+                placeholder="Transaction description"
+                required
+              />
+            </div>
+            
+            <div className="new-transaction-form-row">
+              <label className="new-transaction-form-label">Category</label>
+              <GlassInput
+                name="category"
+                value={newTransaction.category}
+                onChange={handleNewTransactionChange}
+                placeholder="Transaction category"
+                required
+              />
+            </div>
+            
+            <div className="new-transaction-form-row">
+              <label className="new-transaction-form-label">Amount</label>
+              <GlassInput
+                type="number"
+                name="amount"
+                value={newTransaction.amount}
+                onChange={handleNewTransactionChange}
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+            
+            <div className="new-transaction-form-row">
+              <label className="new-transaction-form-label">Type</label>
               <div className="new-transaction-form-radio-group">
                 <label className="new-transaction-form-radio">
                   <input
@@ -212,42 +299,6 @@ const FinancialManagement: React.FC = () => {
                 </label>
               </div>
             </div>
-            
-            <GlassInput
-              label="Amount"
-              name="amount"
-              type="number"
-              value={newTransaction.amount as string}
-              onChange={handleNewTransactionChange}
-              required
-              placeholder="Enter amount"
-            />
-            
-            <GlassInput
-              label="Description"
-              name="description"
-              value={newTransaction.description}
-              onChange={handleNewTransactionChange}
-              required
-              placeholder="Enter description"
-            />
-            
-            <GlassInput
-              label="Category"
-              name="category"
-              value={newTransaction.category}
-              onChange={handleNewTransactionChange}
-              placeholder="Enter category"
-            />
-            
-            <GlassInput
-              label="Date"
-              name="date"
-              type="date"
-              value={newTransaction.date}
-              onChange={handleNewTransactionChange}
-              required
-            />
             
             <div className="new-transaction-form-row">
               <label className="new-transaction-form-label">Status</label>
@@ -286,7 +337,6 @@ const FinancialManagement: React.FC = () => {
           </div>
         </GlassCard>
       )}
-
       <div className="financial-management-filters">
         <div className="transaction-filter-buttons">
           <GlassButton 
@@ -322,7 +372,6 @@ const FinancialManagement: React.FC = () => {
           />
         </div>
       </div>
-
       <GlassCard title="Transactions" className="transactions-card">
         <div className="transactions-table-container">
           <table className="transactions-table">

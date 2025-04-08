@@ -1,133 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CustomerManagement.css';
 import GlassCard from '../GlassCard/GlassCard';
 import GlassButton from '../GlassButton/GlassButton';
 import GlassInput from '../GlassInput/GlassInput';
 
-// Mock customer data
+// Define interface for CustomerManagement component props
+interface CustomerManagementProps {
+  onMount?: () => void;
+}
+
+// Sample data for customer metrics
+const customerMetrics = {
+  totalCustomers: 156,
+  activeCustomers: 87,
+  potentialCustomers: 42,
+  churnRate: 3.2,
+  customerLifetimeValue: 12500,
+  acquisitionCost: 450
+};
+
+// Sample data for customers
 const initialCustomers = [
   {
     id: 1,
     name: 'John Smith',
-    company: 'Acme Inc.',
-    email: 'john.smith@acme.com',
-    phone: '+1 (555) 123-4567',
-    status: 'customer',
+    company: 'ABC Corp',
+    email: 'john.smith@abccorp.com',
+    phone: '(555) 123-4567',
+    status: 'client',
+    value: 15000,
     lastContact: '2025-04-01',
-    notes: 'Key decision maker, prefers email communication',
-    value: 12500
+    notes: 'Long-term client with multiple ongoing projects. Interested in expanding services to include AI integration.'
   },
   {
     id: 2,
     name: 'Sarah Johnson',
     company: 'TechCorp',
     email: 'sarah.j@techcorp.com',
-    phone: '+1 (555) 987-6543',
+    phone: '(555) 234-5678',
     status: 'lead',
+    value: 0,
     lastContact: '2025-04-03',
-    notes: 'Interested in our premium plan, follow up next week',
-    value: 0
+    notes: 'Initial meeting went well. Needs proposal for website redesign and marketing services by April 15.'
   },
   {
     id: 3,
     name: 'Michael Brown',
     company: 'Global Solutions',
     email: 'm.brown@globalsolutions.com',
-    phone: '+1 (555) 456-7890',
+    phone: '(555) 345-6789',
     status: 'partner',
-    lastContact: '2025-04-01',
-    notes: 'Strategic partnership for Asia market expansion',
-    value: 35000
+    value: 45000,
+    lastContact: '2025-04-05',
+    notes: 'Strategic partnership for co-marketing and service referrals. Quarterly review scheduled for April 30.'
   },
   {
     id: 4,
-    name: 'Emily Davis',
-    company: 'Innovate LLC',
-    email: 'emily@innovatellc.com',
-    phone: '+1 (555) 234-5678',
-    status: 'customer',
-    lastContact: '2025-03-28',
-    notes: 'Recently upgraded to business plan',
-    value: 8500
+    name: 'Emily Chen',
+    company: 'Innovate Inc',
+    email: 'emily@innovateinc.com',
+    phone: '(555) 456-7890',
+    status: 'client',
+    value: 8500,
+    lastContact: '2025-04-02',
+    notes: 'Current project on track for May delivery. Discussing potential phase 2 expansion.'
   },
   {
     id: 5,
     name: 'David Wilson',
     company: 'Startup Hub',
     email: 'david@startuphub.co',
-    phone: '+1 (555) 876-5432',
+    phone: '(555) 567-8901',
     status: 'lead',
-    lastContact: '2025-04-05',
-    notes: 'Requested demo, scheduled for next Tuesday',
-    value: 0
+    value: 0,
+    lastContact: '2025-04-04',
+    notes: 'Startup founder looking for comprehensive business management solution. Budget constraints but high growth potential.'
   }
 ];
 
-const CustomerManagement: React.FC = () => {
+const CustomerManagement: React.FC<CustomerManagementProps> = ({ onMount }) => {
   const [customers, setCustomers] = useState(initialCustomers);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
+  const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
   const [newCustomer, setNewCustomer] = useState({
     name: '',
     company: '',
     email: '',
     phone: '',
     status: 'lead',
-    notes: '',
-    value: ''
+    value: '',
+    notes: ''
   });
 
-  // Calculate customer metrics
-  const customerMetrics = {
-    totalCustomers: customers.filter(c => c.status === 'customer').length,
-    totalLeads: customers.filter(c => c.status === 'lead').length,
-    totalPartners: customers.filter(c => c.status === 'partner').length,
-    totalValue: customers.reduce((sum, c) => sum + c.value, 0)
-  };
+  // Call onMount callback when component mounts
+  useEffect(() => {
+    if (onMount) {
+      onMount();
+    }
+  }, [onMount]);
 
   // Filter customers based on status and search term
   const filteredCustomers = customers.filter(customer => {
     const matchesFilter = filter === 'all' || customer.status === filter;
     const matchesSearch = 
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
     return matchesFilter && matchesSearch;
   });
-
-  // Handle new customer form input changes
-  const handleNewCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewCustomer({
-      ...newCustomer,
-      [name]: name === 'value' ? value : value
-    });
-  };
-
-  // Handle new customer submission
-  const handleNewCustomerSubmit = () => {
-    if (newCustomer.name && newCustomer.email) {
-      const newCustomerWithId = {
-        ...newCustomer,
-        id: customers.length + 1,
-        lastContact: new Date().toISOString().split('T')[0],
-        value: parseFloat(newCustomer.value as string) || 0
-      };
-      setCustomers([...customers, newCustomerWithId]);
-      setNewCustomer({
-        name: '',
-        company: '',
-        email: '',
-        phone: '',
-        status: 'lead',
-        notes: '',
-        value: ''
-      });
-      setShowNewCustomerForm(false);
-    }
-  };
 
   // Toggle customer details view
   const toggleCustomerDetails = (customerId: number) => {
@@ -138,134 +121,159 @@ const CustomerManagement: React.FC = () => {
     }
   };
 
+  // Handle input change for new customer form
+  const handleNewCustomerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewCustomer({ ...newCustomer, [name]: value });
+  };
+
+  // Handle new customer submission
+  const handleNewCustomerSubmit = () => {
+    const newCustomerWithId = {
+      ...newCustomer,
+      id: Math.max(...customers.map(c => c.id)) + 1,
+      value: newCustomer.value ? parseFloat(newCustomer.value) : 0,
+      lastContact: new Date().toISOString().split('T')[0]
+    };
+    setCustomers([...customers, newCustomerWithId]);
+    setShowNewCustomerForm(false);
+    setNewCustomer({
+      name: '',
+      company: '',
+      email: '',
+      phone: '',
+      status: 'lead',
+      value: '',
+      notes: ''
+    });
+  };
+
   return (
     <div className="customer-management">
       <div className="customer-management-header">
         <h1 className="customer-management-title">Customer Management</h1>
-        <div className="customer-management-actions">
-          <GlassButton 
-            variant="primary" 
-            onClick={() => setShowNewCustomerForm(!showNewCustomerForm)}
-          >
-            {showNewCustomerForm ? 'Cancel' : 'New Customer'}
-          </GlassButton>
-        </div>
+        <GlassButton 
+          variant="primary" 
+          onClick={() => setShowNewCustomerForm(true)}
+        >
+          Add Customer
+        </GlassButton>
       </div>
-
-      <div className="customer-metrics-cards">
-        <GlassCard title="Customers" className="customer-metric-card customer-metric-customers">
-          <div className="customer-metric-value">{customerMetrics.totalCustomers}</div>
-          <div className="customer-metric-label">Active Customers</div>
+      
+      <div className="customer-metrics-grid">
+        <GlassCard title="Active Customers" className="customer-metric-card">
+          <div className="customer-metric-value">{customerMetrics.activeCustomers}</div>
+          <div className="customer-metric-chart">
+            {/* Active customers chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Leads" className="customer-metric-card customer-metric-leads">
-          <div className="customer-metric-value">{customerMetrics.totalLeads}</div>
-          <div className="customer-metric-label">Potential Customers</div>
+        <GlassCard title="Potential Customers" className="customer-metric-card">
+          <div className="customer-metric-value">{customerMetrics.potentialCustomers}</div>
+          <div className="customer-metric-chart">
+            {/* Potential customers chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Partners" className="customer-metric-card customer-metric-partners">
-          <div className="customer-metric-value">{customerMetrics.totalPartners}</div>
-          <div className="customer-metric-label">Business Partners</div>
+        <GlassCard title="Customer Lifetime Value" className="customer-metric-card">
+          <div className="customer-metric-value">${customerMetrics.customerLifetimeValue.toLocaleString()}</div>
+          <div className="customer-metric-chart">
+            {/* CLV chart would go here */}
+          </div>
         </GlassCard>
-        
-        <GlassCard title="Customer Value" className="customer-metric-card customer-metric-value">
-          <div className="customer-metric-value">${customerMetrics.totalValue.toLocaleString()}</div>
-          <div className="customer-metric-label">Total Customer Value</div>
+        <GlassCard title="Churn Rate" className="customer-metric-card">
+          <div className="customer-metric-value">{customerMetrics.churnRate}%</div>
+          <div className="customer-metric-chart">
+            {/* Churn rate chart would go here */}
+          </div>
         </GlassCard>
       </div>
-
+      
       {showNewCustomerForm && (
-        <GlassCard title="Add New Customer" className="new-customer-form">
-          <div className="new-customer-form-grid">
-            <GlassInput
-              label="Name"
-              name="name"
-              value={newCustomer.name}
-              onChange={handleNewCustomerChange}
-              required
-              placeholder="Enter customer name"
-            />
-            
-            <GlassInput
-              label="Company"
-              name="company"
-              value={newCustomer.company}
-              onChange={handleNewCustomerChange}
-              placeholder="Enter company name"
-            />
-            
-            <GlassInput
-              label="Email"
-              name="email"
-              type="email"
-              value={newCustomer.email}
-              onChange={handleNewCustomerChange}
-              required
-              placeholder="Enter email address"
-            />
-            
-            <GlassInput
-              label="Phone"
-              name="phone"
-              value={newCustomer.phone}
-              onChange={handleNewCustomerChange}
-              placeholder="Enter phone number"
-            />
-            
+        <GlassCard title="Add New Customer" className="new-customer-form-card">
+          <div className="new-customer-form">
             <div className="new-customer-form-row">
-              <label className="new-customer-form-label">Status</label>
-              <div className="new-customer-form-radio-group">
-                <label className="new-customer-form-radio">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="lead"
-                    checked={newCustomer.status === 'lead'}
-                    onChange={handleNewCustomerChange}
-                  />
-                  Lead
-                </label>
-                <label className="new-customer-form-radio">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="customer"
-                    checked={newCustomer.status === 'customer'}
-                    onChange={handleNewCustomerChange}
-                  />
-                  Customer
-                </label>
-                <label className="new-customer-form-radio">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="partner"
-                    checked={newCustomer.status === 'partner'}
-                    onChange={handleNewCustomerChange}
-                  />
-                  Partner
-                </label>
+              <div className="new-customer-form-field">
+                <label>Name</label>
+                <GlassInput
+                  name="name"
+                  value={newCustomer.name}
+                  onChange={handleNewCustomerChange}
+                  placeholder="Customer name"
+                  required
+                />
+              </div>
+              <div className="new-customer-form-field">
+                <label>Company</label>
+                <GlassInput
+                  name="company"
+                  value={newCustomer.company}
+                  onChange={handleNewCustomerChange}
+                  placeholder="Company name"
+                  required
+                />
               </div>
             </div>
-            
-            <GlassInput
-              label="Customer Value"
-              name="value"
-              type="number"
-              value={newCustomer.value as string}
-              onChange={handleNewCustomerChange}
-              placeholder="Enter customer value"
-            />
+            <div className="new-customer-form-row">
+              <div className="new-customer-form-field">
+                <label>Email</label>
+                <GlassInput
+                  type="email"
+                  name="email"
+                  value={newCustomer.email}
+                  onChange={handleNewCustomerChange}
+                  placeholder="Email address"
+                  required
+                />
+              </div>
+              <div className="new-customer-form-field">
+                <label>Phone</label>
+                <GlassInput
+                  name="phone"
+                  value={newCustomer.phone}
+                  onChange={handleNewCustomerChange}
+                  placeholder="Phone number"
+                />
+              </div>
+            </div>
+            <div className="new-customer-form-row">
+              <div className="new-customer-form-field">
+                <label>Status</label>
+                <select
+                  name="status"
+                  value={newCustomer.status}
+                  onChange={handleNewCustomerChange}
+                  className="glass-select"
+                >
+                  <option value="lead">Lead</option>
+                  <option value="client">Client</option>
+                  <option value="partner">Partner</option>
+                </select>
+              </div>
+              <div className="new-customer-form-field">
+                <label>Value ($)</label>
+                <GlassInput
+                  type="number"
+                  name="value"
+                  value={newCustomer.value}
+                  onChange={handleNewCustomerChange}
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+            <div className="new-customer-form-row">
+              <div className="new-customer-form-field full-width">
+                <label>Notes</label>
+                <textarea
+                  name="notes"
+                  value={newCustomer.notes}
+                  onChange={handleNewCustomerChange}
+                  placeholder="Additional notes about the customer"
+                  className="glass-textarea"
+                />
+              </div>
+            </div>
           </div>
-          
-          <GlassInput
-            label="Notes"
-            name="notes"
-            value={newCustomer.notes}
-            onChange={handleNewCustomerChange}
-            placeholder="Enter any additional notes"
-          />
-          
           <div className="new-customer-form-actions">
             <GlassButton variant="secondary" onClick={() => setShowNewCustomerForm(false)}>
               Cancel
@@ -276,7 +284,6 @@ const CustomerManagement: React.FC = () => {
           </div>
         </GlassCard>
       )}
-
       <div className="customer-management-filters">
         <div className="customer-filter-buttons">
           <GlassButton 
@@ -286,10 +293,10 @@ const CustomerManagement: React.FC = () => {
             All
           </GlassButton>
           <GlassButton 
-            variant={filter === 'customer' ? 'primary' : 'default'} 
-            onClick={() => setFilter('customer')}
+            variant={filter === 'client' ? 'primary' : 'default'} 
+            onClick={() => setFilter('client')}
           >
-            Customers
+            Clients
           </GlassButton>
           <GlassButton 
             variant={filter === 'lead' ? 'primary' : 'default'} 
@@ -312,7 +319,6 @@ const CustomerManagement: React.FC = () => {
           />
         </div>
       </div>
-
       <div className="customer-list">
         {filteredCustomers.length === 0 ? (
           <GlassCard title="No Customers Found" className="no-customers-card">
