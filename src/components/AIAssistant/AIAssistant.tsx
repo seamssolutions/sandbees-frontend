@@ -10,8 +10,18 @@ interface AIAssistantProps {
   onMount?: () => void;
 }
 
+// Define interface for AI agent
+interface AIAgent {
+  id: number;
+  name: string;
+  role: string;
+  description: string;
+  capabilities: string[];
+  active: boolean;
+}
+
 // Sample data for AI agents
-const aiAgents = [
+const aiAgents: AIAgent[] = [
   {
     id: 1,
     name: 'Executive Meta-Agent',
@@ -54,8 +64,19 @@ const aiAgents = [
   }
 ];
 
+// Define interface for active task
+interface ActiveTask {
+  id: number;
+  title: string;
+  description: string;
+  assignedTo: string;
+  status: string;
+  progress: number;
+  dueDate: string;
+}
+
 // Sample data for active tasks
-const activeTasks = [
+const activeTasks: ActiveTask[] = [
   {
     id: 1,
     title: 'Develop Q2 Marketing Strategy',
@@ -85,8 +106,17 @@ const activeTasks = [
   }
 ];
 
+// Define interface for conversation message
+interface ConversationMessage {
+  id: number;
+  sender: string;
+  agent?: string;
+  message: string;
+  timestamp: string;
+}
+
 // Sample conversation history
-const initialConversation = [
+const initialConversation: ConversationMessage[] = [
   {
     id: 1,
     sender: 'user',
@@ -116,8 +146,8 @@ const initialConversation = [
 ];
 
 const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
-  const [activeAgent, setActiveAgent] = useState(aiAgents[0]);
-  const [conversation, setConversation] = useState(initialConversation);
+  const [activeAgent, setActiveAgent] = useState<AIAgent>(aiAgents[0]);
+  const [conversation, setConversation] = useState<ConversationMessage[]>(initialConversation);
   const [newMessage, setNewMessage] = useState('');
   // We'll keep the setIsLoading function but remove the unused isLoading variable
   const [, setIsLoading] = useState(false);
@@ -135,7 +165,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
     if (!newMessage.trim()) return;
     
     // Add user message to conversation
-    const userMessage = {
+    const userMessage: ConversationMessage = {
       id: conversation.length + 1,
       sender: 'user',
       message: newMessage,
@@ -149,7 +179,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
     try {
       // Simulate AI response
       setTimeout(() => {
-        const aiResponse = {
+        const aiResponse: ConversationMessage = {
           id: conversation.length + 2,
           sender: 'agent',
           agent: activeAgent.name,
@@ -166,7 +196,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onMount }) => {
   };
 
   // Switch active agent
-  const switchAgent = (agent) => {
+  const switchAgent = (agent: AIAgent) => {
     setActiveAgent(agent);
     setShowAgentDetails(false);
   };
